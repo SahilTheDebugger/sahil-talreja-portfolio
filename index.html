@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sahil Talreja — Video Editor, Script Writer & Social Media Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #05102b;
+    --blue: #1a3a8f;
+    --bright: #2f6eff;
+    --sky: #5c9eff;
+    --white: #ffffff;
+    --off: #f4f7ff;
+    --muted: #8fa3c8;
+    --border: rgba(47,110,255,0.18);
+  }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ── CUSTOM CURSOR (desktop only) ── */
+  @media (pointer: fine) {
+    body { cursor: none; }
+    .cursor {
+      width: 8px; height: 8px; background: var(--bright);
+      border-radius: 50%; position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9999; transition: transform .08s;
+    }
+    .cursor-ring {
+      width: 32px; height: 32px; border: 1.5px solid var(--bright);
+      border-radius: 50%; position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9998; opacity: 0.5;
+      transition: width .3s, height .3s, opacity .3s;
+    }
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 18px 60px;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    background: rgba(5,16,43,0.88);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px;
+    color: var(--white); text-decoration: none; letter-spacing: 2px;
+  }
+  .nav-logo span { color: var(--bright); }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    color: var(--muted); text-decoration: none; font-size: 12px;
+    letter-spacing: 2px; text-transform: uppercase; transition: color .3s;
+  }
+  .nav-links a:hover { color: var(--white); }
+
+  /* hamburger */
+  .hamburger {
+    display: none; flex-direction: column; gap: 5px;
+    background: none; border: none; cursor: pointer; padding: 4px;
+  }
+  .hamburger span {
+    display: block; width: 24px; height: 2px;
+    background: var(--white); border-radius: 2px;
+    transition: transform .3s, opacity .3s;
+  }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .mobile-menu {
+    display: none; position: fixed; top: 60px; left: 0; right: 0; z-index: 99;
+    background: rgba(5,16,43,0.97); border-bottom: 1px solid var(--border);
+    padding: 24px 20px; flex-direction: column; gap: 20px;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    color: var(--muted); text-decoration: none; font-size: 14px;
+    letter-spacing: 2px; text-transform: uppercase; transition: color .3s;
+    padding: 8px 0; border-bottom: 1px solid var(--border);
+  }
+  .mobile-menu a:last-child { border-bottom: none; }
+  .mobile-menu a:hover { color: var(--white); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 140px 60px 80px;
+    position: relative; overflow: hidden;
+  }
+  .hero-grid-bg {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(47,110,255,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(47,110,255,0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+  }
+  .hero-glow {
+    position: absolute; width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(47,110,255,0.18) 0%, transparent 70%);
+    top: -100px; right: -100px; border-radius: 50%;
+    animation: pulse 6s ease-in-out infinite;
+  }
+  .hero-glow2 {
+    position: absolute; width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(92,158,255,0.1) 0%, transparent 70%);
+    bottom: 0; left: 200px; border-radius: 50%;
+    animation: pulse 8s ease-in-out infinite reverse;
+  }
+  @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.1);opacity:.7} }
+
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(47,110,255,0.12); border: 1px solid var(--border);
+    color: var(--sky); font-size: 11px; letter-spacing: 3px;
+    text-transform: uppercase; padding: 8px 20px; width: fit-content;
+    margin-bottom: 32px; opacity: 0; animation: fadeUp .7s .2s forwards;
+    border-radius: 2px;
+  }
+  .hero-tag::before { content:'●'; font-size:6px; animation: blink 1.5s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+  .hero-name {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: clamp(56px, 9vw, 118px);
+    line-height: .92; letter-spacing: -2px;
+    opacity: 0; animation: fadeUp .7s .4s forwards;
+  }
+  .hero-name .line2 {
+    background: linear-gradient(90deg, var(--bright), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-role {
+    font-family: 'Instrument Serif', serif; font-style: italic;
+    font-size: clamp(16px, 2.2vw, 24px); color: var(--muted);
+    margin-top: 20px; opacity: 0; animation: fadeUp .7s .6s forwards;
+  }
+  .hero-desc {
+    margin-top: 24px; font-size: 15px; line-height: 1.9; color: var(--muted);
+    max-width: 560px; opacity: 0; animation: fadeUp .7s .8s forwards;
+  }
+  .hero-cta {
+    margin-top: 48px; display: flex; gap: 16px; flex-wrap: wrap;
+    opacity: 0; animation: fadeUp .7s 1s forwards;
+  }
+  .btn-blue {
+    background: var(--bright); color: white; padding: 14px 32px;
+    font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+    border: none; cursor: pointer; text-decoration: none;
+    font-family: 'Inter', sans-serif; font-weight: 500;
+    transition: background .3s, transform .2s, box-shadow .3s; border-radius: 3px;
+    display: inline-block;
+  }
+  .btn-blue:hover { background: #1a5cdd; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(47,110,255,.35); }
+  .btn-outline {
+    color: var(--white); padding: 14px 32px; font-size: 12px;
+    letter-spacing: 2px; text-transform: uppercase; border: 1px solid var(--border);
+    text-decoration: none; font-family: 'Inter', sans-serif;
+    transition: border-color .3s, color .3s, background .3s; border-radius: 3px;
+    display: inline-block;
+  }
+  .btn-outline:hover { border-color: var(--bright); color: var(--bright); background: rgba(47,110,255,.05); }
+
+  /* ── STATS ── */
+  .stats {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,.02);
+  }
+  .stat-item {
+    padding: 48px 40px; border-right: 1px solid var(--border);
+    position: relative; overflow: hidden; transition: background .4s;
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-item::after {
+    content:''; position: absolute; bottom:0; left:0; right:0; height:2px;
+    background: linear-gradient(90deg, var(--bright), var(--sky));
+    transform: scaleX(0); transform-origin: left; transition: transform .5s;
+  }
+  .stat-item:hover { background: rgba(47,110,255,.06); }
+  .stat-item:hover::after { transform: scaleX(1); }
+  .stat-num {
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 54px; line-height: 1;
+    background: linear-gradient(90deg, #fff, var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .stat-label {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted); margin-top: 10px;
+  }
+
+  /* ── COMMON SECTION ── */
+  section { padding: 110px 60px; }
+  .sec-label {
+    font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--bright); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .sec-label::before { content:''; display:inline-block; width:32px; height:1px; background:var(--bright); }
+  .sec-title {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: clamp(36px, 5.5vw, 68px); line-height: 1;
+    letter-spacing: -1px; color: var(--white);
+  }
+  .sec-title .blue {
+    background: linear-gradient(90deg, var(--bright), var(--sky));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  /* ── ABOUT ── */
+  .about-grid {
+    margin-top: 56px; display: grid; grid-template-columns: 1.1fr 1fr;
+    gap: 72px; align-items: start;
+  }
+  .about-text { font-size: 15px; line-height: 1.9; color: var(--muted); }
+  .about-text strong { color: var(--white); font-weight: 500; }
+  .about-quote {
+    margin-top: 32px; padding: 26px 28px;
+    border-left: 3px solid var(--bright);
+    background: rgba(47,110,255,.07); border-radius: 0 4px 4px 0;
+  }
+  .about-quote p {
+    font-family: 'Instrument Serif', serif; font-style: italic;
+    font-size: 19px; line-height: 1.6; color: var(--white);
+  }
+  .brands-title {
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 18px;
+  }
+  .brands-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .brand-card {
+    padding: 18px 20px; border: 1px solid var(--border);
+    background: rgba(255,255,255,.02); border-radius: 4px;
+    transition: border-color .3s, background .3s, transform .3s;
+  }
+  .brand-card:hover { border-color: var(--bright); background: rgba(47,110,255,.08); transform: translateY(-3px); }
+  .brand-card-name { font-family:'Syne',sans-serif; font-weight:700; font-size:14px; color:var(--white); margin-bottom:3px; }
+  .brand-card-type { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); }
+  .book-card {
+    margin-top: 14px; padding: 22px; border: 1px solid rgba(92,158,255,.3);
+    background: linear-gradient(135deg,rgba(47,110,255,.1),rgba(92,158,255,.05));
+    border-radius: 4px; display: flex; align-items: center; gap: 14px;
+  }
+  .book-icon { font-size:30px; }
+  .book-title { font-family:'Syne',sans-serif; font-weight:700; font-size:14px; color:var(--white); }
+  .book-sub { font-size:12px; color:var(--muted); margin-top:3px; }
+
+  /* ── EXPERIENCE ── */
+  .exp-section { background: rgba(255,255,255,.01); border-top: 1px solid var(--border); }
+  .exp-list { margin-top: 60px; }
+  .exp-card {
+    display: grid; grid-template-columns: 200px 1fr; gap: 44px;
+    padding: 44px 0; border-bottom: 1px solid var(--border);
+    position: relative; transition: padding-left .4s;
+  }
+  .exp-card::before {
+    content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+    background: linear-gradient(to bottom, var(--bright), var(--sky));
+    transform: scaleY(0); transform-origin: top; transition: transform .5s;
+  }
+  .exp-card:hover { padding-left: 20px; }
+  .exp-card:hover::before { transform: scaleY(1); }
+  .exp-period { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--bright); margin-bottom:8px; }
+  .exp-company { font-family:'Syne',sans-serif; font-weight:600; font-size:13px; color:var(--muted); }
+  .exp-role {
+    font-family:'Syne',sans-serif; font-weight:800; font-size:28px;
+    letter-spacing:-.5px; color:var(--white); margin-bottom:18px; line-height:1.1;
+  }
+  .exp-points { list-style:none; }
+  .exp-points li {
+    font-size:14px; color:var(--muted); line-height:1.8;
+    padding-left:20px; position:relative; margin-bottom:8px;
+  }
+  .exp-points li::before {
+    content:''; position:absolute; left:0; top:10px;
+    width:6px; height:6px; border:1.5px solid var(--bright); border-radius:50%;
+  }
+
+  /* ── YOUTUBE ── */
+  .yt-section {
+    background: var(--white); color: var(--navy);
+    padding: 110px 60px; position: relative; overflow: hidden;
+  }
+  .yt-section::before {
+    content:'YOUTUBE'; position:absolute;
+    font-family:'Syne',sans-serif; font-weight:800; font-size:200px;
+    color:rgba(5,16,43,.05); top:50%; left:50%;
+    transform:translate(-50%,-50%); white-space:nowrap; user-select:none;
+    pointer-events:none;
+  }
+  .yt-inner {
+    display:grid; grid-template-columns:1fr 1fr; gap:72px;
+    align-items:center; position:relative; z-index:1;
+  }
+  .yt-left .sec-label { color:var(--blue); }
+  .yt-left .sec-label::before { background:var(--blue); }
+  .yt-left .sec-title { color:var(--navy); }
+  .yt-text { font-size:15px; line-height:1.9; color:#4a6080; margin-top:22px; }
+  .yt-text strong { color: var(--navy); }
+  .yt-right { display:flex; flex-direction:column; gap:14px; }
+  .yt-stat-card {
+    padding:26px 28px; border:1px solid rgba(26,58,143,.15);
+    background:var(--off); border-radius:6px;
+    display:flex; align-items:center; gap:18px;
+    transition:transform .3s, box-shadow .3s;
+  }
+  .yt-stat-card:hover { transform:translateX(8px); box-shadow:-4px 0 20px rgba(26,58,143,.15); }
+  .yt-stat-icon { font-size:34px; flex-shrink:0; }
+  .yt-stat-num { font-family:'Syne',sans-serif; font-weight:800; font-size:38px; color:var(--navy); line-height:1; }
+  .yt-stat-label { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:#7a90b0; margin-top:3px; }
+
+  .yt-cta-wrap { margin-top: 28px; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+  .yt-channel {
+    display:inline-flex; align-items:center; gap:10px;
+    background:var(--navy); color:var(--white); padding:14px 28px; border-radius:4px;
+    font-family:'Syne',sans-serif; font-weight:700; font-size:14px; letter-spacing:1px;
+    text-decoration:none; transition:background .3s, transform .2s;
+  }
+  .yt-channel:hover { background:var(--blue); transform:translateY(-2px); }
+  .yt-channel-sub { font-size:12px; color:#7a90b0; letter-spacing:1px; }
+
+  /* ── SKILLS ── */
+  .skills-section { border-top: 1px solid var(--border); }
+  .skills-grid { margin-top:56px; display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .skill-card {
+    padding:28px 26px; border:1px solid var(--border);
+    background:rgba(255,255,255,.02); border-radius:6px;
+    position:relative; overflow:hidden;
+    transition:border-color .3s, transform .3s, background .3s;
+  }
+  .skill-card::after {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg,var(--bright),var(--sky));
+    transform:scaleX(0); transform-origin:left; transition:transform .4s;
+  }
+  .skill-card:hover { border-color:rgba(47,110,255,.4); transform:translateY(-4px); background:rgba(47,110,255,.05); }
+  .skill-card:hover::after { transform:scaleX(1); }
+  .skill-icon { font-size:28px; margin-bottom:14px; }
+  .skill-name { font-family:'Syne',sans-serif; font-weight:700; font-size:15px; color:var(--white); margin-bottom:7px; }
+  .skill-desc { font-size:13px; color:var(--muted); line-height:1.7; }
+
+  /* ── CONTACT ── */
+  .contact-section {
+    background:linear-gradient(135deg,#0b1d52 0%,var(--navy) 100%);
+    border-top:1px solid var(--border); padding:110px 60px;
+  }
+  .contact-grid { margin-top:56px; display:grid; grid-template-columns:1fr 1fr; gap:52px; align-items:start; }
+  .contact-cards { display:flex; flex-direction:column; gap:12px; }
+  .contact-card {
+    display:flex; align-items:center; gap:18px; padding:22px 24px;
+    border:1px solid var(--border); background:rgba(255,255,255,.03);
+    border-radius:6px; transition:border-color .3s,background .3s; text-decoration:none;
+    cursor:pointer;
+  }
+  .contact-card:hover { border-color:var(--bright); background:rgba(47,110,255,.07); }
+  .contact-card-icon {
+    width:42px; height:42px; background:rgba(47,110,255,.15);
+    border-radius:4px; display:flex; align-items:center; justify-content:center;
+    font-size:18px; flex-shrink:0;
+  }
+  .contact-card-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); }
+  .contact-card-val { font-size:14px; color:var(--white); font-weight:500; margin-top:2px; }
+
+  /* Download panel */
+  .download-panel {
+    background:var(--white); color:var(--navy); padding:48px 40px;
+    border-radius:8px; text-align:center; position:relative; overflow:hidden;
+  }
+  .download-panel::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:4px;
+    background:linear-gradient(90deg,var(--bright),var(--sky));
+  }
+  .dl-icon { font-size:48px; margin-bottom:14px; }
+  .dl-title {
+    font-family:'Syne',sans-serif; font-weight:800; font-size:28px;
+    color:var(--navy); letter-spacing:-.5px; margin-bottom:10px;
+  }
+  .dl-desc { font-size:14px; color:#4a6080; line-height:1.8; margin-bottom:32px; }
+  .btn-download {
+    display:inline-flex; align-items:center; gap:10px;
+    background:linear-gradient(90deg,var(--bright),var(--sky));
+    color:white; padding:15px 36px; font-size:12px; letter-spacing:2px;
+    text-transform:uppercase; text-decoration:none; border-radius:3px;
+    font-family:'Inter',sans-serif; font-weight:500; cursor:pointer;
+    transition:opacity .3s,transform .2s,box-shadow .3s;
+    box-shadow:0 4px 20px rgba(47,110,255,.3);
+  }
+  .btn-download:hover { opacity:.9; transform:translateY(-2px); box-shadow:0 8px 32px rgba(47,110,255,.45); }
+
+  /* ── FOOTER ── */
+  footer {
+    background:rgba(0,0,0,.3); border-top:1px solid var(--border);
+    padding:32px 60px; display:flex; justify-content:space-between;
+    align-items:center; flex-wrap:wrap; gap:14px;
+  }
+  .footer-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:18px; color:var(--white); }
+  .footer-logo span { color:var(--bright); }
+  .footer-copy { font-size:12px; color:var(--muted); }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width:3px; }
+  ::-webkit-scrollbar-track { background:var(--navy); }
+  ::-webkit-scrollbar-thumb { background:var(--bright); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+  .reveal { opacity:0; transform:translateY(22px); transition:opacity .7s ease,transform .7s ease; }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 14px 20px; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+
+    .hero { padding: 110px 20px 60px; }
+    .hero-glow, .hero-glow2 { display: none; }
+
+    .stats { grid-template-columns: 1fr 1fr; }
+    .stat-item { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 32px 24px; }
+    .stat-item:nth-child(2n) { border-right: none; }
+    .stat-num { font-size: 40px; }
+
+    section { padding: 72px 20px; }
+
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+
+    .exp-card { grid-template-columns: 1fr; gap: 10px; padding: 32px 0; }
+    .exp-card:hover { padding-left: 0; }
+
+    .yt-section { padding: 72px 20px; }
+    .yt-inner { grid-template-columns: 1fr; gap: 40px; }
+    .yt-section::before { font-size: 80px; }
+
+    .skills-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .contact-section { padding: 72px 20px; }
+    .contact-grid { grid-template-columns: 1fr; gap: 32px; }
+
+    footer { padding: 24px 20px; flex-direction: column; text-align: center; }
+  }
+
+  @media (max-width: 480px) {
+    .hero-name { font-size: 52px; }
+    .stats { grid-template-columns: 1fr 1fr; }
+    .brands-grid { grid-template-columns: 1fr; }
+    .skills-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Cursor (desktop) -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">ST<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#youtube">YouTube</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" onclick="closeMobile()">About</a>
+  <a href="#experience" onclick="closeMobile()">Experience</a>
+  <a href="#youtube" onclick="closeMobile()">YouTube</a>
+  <a href="#skills" onclick="closeMobile()">Skills</a>
+  <a href="#contact" onclick="closeMobile()">Contact</a>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-tag">Available for Projects</div>
+  <h1 class="hero-name">
+    SAHIL<br>
+    <span class="line2">TALREJA</span>
+  </h1>
+  <div class="hero-role">Video Editor · Script Writer · Social Media Manager</div>
+  <p class="hero-desc">3+ years crafting stories that move people. 30M+ YouTube views, scripts for India's top brands, and content that keeps audiences coming back.</p>
+  <div class="hero-cta">
+    <a href="#contact" class="btn-blue">Get In Touch</a>
+    <a href="#experience" class="btn-outline">View Work</a>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat-item reveal">
+    <div class="stat-num"><span class="count" data-target="30" data-suffix="M+">0</span></div>
+    <div class="stat-label">YouTube Views</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-num"><span class="count" data-target="20" data-suffix="K+">0</span></div>
+    <div class="stat-label">Subscribers</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-num"><span class="count" data-target="50" data-suffix="+">0</span></div>
+    <div class="stat-label">Projects Done</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-num"><span class="count" data-target="3" data-suffix="+">0</span></div>
+    <div class="stat-label">Years Experience</div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="sec-label">About Me</div>
+  <h2 class="sec-title">THE STORY<br>BEHIND THE <span class="blue">FRAME</span></h2>
+  <div class="about-grid">
+    <div class="reveal">
+      <p class="about-text">
+        I'm <strong>Sahil Talreja</strong> — a creative and detail-oriented video editor, writer, and social media manager based in Ahmedabad, India. With over <strong>3 years of hands-on experience</strong>, I specialize in crafting digital content that doesn't just look good — it performs.
+        <br><br>
+        From managing influencer accounts to writing scripts for <strong>leading Indian brands</strong>, I understand what makes audiences stop, watch, and engage. I've even authored a debut novel, proving that storytelling runs deep in everything I do.
+      </p>
+      <div class="about-quote">
+        <p>"I don't just edit videos — I shape narratives that leave an impression long after the screen goes dark."</p>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="brands-title">Brands I've Written Scripts For</div>
+      <div class="brands-grid">
+        <div class="brand-card"><div class="brand-card-name">Milky Mist</div><div class="brand-card-type">Script Writing</div></div>
+        <div class="brand-card"><div class="brand-card-name">Vasant Masala</div><div class="brand-card-type">Script Writing</div></div>
+        <div class="brand-card"><div class="brand-card-name">Jain Dairy</div><div class="brand-card-type">Script Writing</div></div>
+        <div class="brand-card"><div class="brand-card-name">Ajanta</div><div class="brand-card-type">Script Writing</div></div>
+      </div>
+      <div class="book-card">
+        <div class="book-icon">📖</div>
+        <div>
+          <div class="book-title">Cupcake: The Beginning</div>
+          <div class="book-sub">Debut Novel · Published Author</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience" class="exp-section">
+  <div class="sec-label">Work Experience</div>
+  <h2 class="sec-title">WHERE I'VE<br>MADE MY <span class="blue">MARK</span></h2>
+  <div class="exp-list">
+    <div class="exp-card reveal">
+      <div>
+        <div class="exp-period">Sep 2024 – Mar 2025</div>
+        <div class="exp-company">Wellness Space</div>
+      </div>
+      <div>
+        <div class="exp-role">Video Editor &<br>Social Media Manager</div>
+        <ul class="exp-points">
+          <li>Managed and edited wellness content for social platforms and campaigns</li>
+          <li>Handled the Instagram page of Ririi Trivedi, growing engagement and consistency</li>
+          <li>Produced reels and short videos that reflected the brand's tone and message</li>
+        </ul>
+      </div>
+    </div>
+    <div class="exp-card reveal">
+      <div>
+        <div class="exp-period">Feb 2024 – Aug 2024</div>
+        <div class="exp-company">Freelance</div>
+      </div>
+      <div>
+        <div class="exp-role">Freelance<br>Video Editor</div>
+        <ul class="exp-points">
+          <li>Worked with content creator Rohan Virdi and other clients on short- and long-form videos</li>
+          <li>Delivered high-quality edits for YouTube channels, reels, and brand content</li>
+          <li>Built strong client relationships through timely communication and consistent results</li>
+        </ul>
+      </div>
+    </div>
+    <div class="exp-card reveal">
+      <div>
+        <div class="exp-period">Jun 2023 – Jan 2024</div>
+        <div class="exp-company">Digital World Universe · Indore</div>
+      </div>
+      <div>
+        <div class="exp-role">Video Editor</div>
+        <ul class="exp-points">
+          <li>Edited a variety of content for YouTube and Instagram across multiple niches</li>
+          <li>Collaborated with creators and marketers to deliver engaging, on-brand content</li>
+          <li>Developed strategies to increase video performance and viewer retention</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- YOUTUBE -->
+<div id="youtube" class="yt-section">
+  <div class="yt-inner">
+    <div class="yt-left reveal">
+      <div class="sec-label">YouTube</div>
+      <h2 class="sec-title">THE WEIRD<br>GUY <span class="blue">EDITS</span></h2>
+      <p class="yt-text">
+        Built and managed <strong>TheWeirdGuyEdits</strong> YouTube channel from scratch — specialising in editing popular TV show content to maximise audience retention and organic reach. <strong>30 million views and counting.</strong>
+      </p>
+      <div class="yt-cta-wrap">
+        <a href="https://youtube.com/@theweirdguyedits?si=8C1uRXBDnxkSlHic" target="_blank" rel="noopener" class="yt-channel">
+          ▶&nbsp; Visit My YouTube Channel
+        </a>
+        <span class="yt-channel-sub">@theweirdguyedits — opens in new tab</span>
+      </div>
+    </div>
+    <div class="yt-right reveal">
+      <div class="yt-stat-card">
+        <div class="yt-stat-icon">👁️</div>
+        <div>
+          <div class="yt-stat-num"><span class="count-yt" data-target="30" data-suffix="M+">0</span></div>
+          <div class="yt-stat-label">Total Views</div>
+        </div>
+      </div>
+      <div class="yt-stat-card">
+        <div class="yt-stat-icon">🔔</div>
+        <div>
+          <div class="yt-stat-num"><span class="count-yt" data-target="20" data-suffix="K+">0</span></div>
+          <div class="yt-stat-label">Subscribers</div>
+        </div>
+      </div>
+      <div class="yt-stat-card">
+        <div class="yt-stat-icon">🎬</div>
+        <div>
+          <div class="yt-stat-num"><span class="count-yt" data-target="550" data-suffix="+">0</span></div>
+          <div class="yt-stat-label">Videos Uploaded</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SKILLS -->
+<section id="skills" class="skills-section">
+  <div class="sec-label">Skills & Tools</div>
+  <h2 class="sec-title">WHAT I<br><span class="blue">BRING</span></h2>
+  <div class="skills-grid">
+    <div class="skill-card reveal">
+      <div class="skill-icon">🎬</div>
+      <div class="skill-name">Video Editing</div>
+      <div class="skill-desc">Final Cut Pro X, DaVinci Resolve, Adobe Premiere — full post-production for YouTube, reels, and brand content</div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">✍️</div>
+      <div class="skill-name">Scriptwriting</div>
+      <div class="skill-desc">Engaging scripts for India's top brands, viral content creators, and YouTube campaigns</div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">📱</div>
+      <div class="skill-name">Social Media Strategy</div>
+      <div class="skill-desc">Instagram reels, YouTube channel management, and growth strategy with data-driven decisions</div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">📊</div>
+      <div class="skill-name">Social Media Analytics</div>
+      <div class="skill-desc">Tracking performance metrics, audience retention, and engagement to continuously improve content</div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">🎞️</div>
+      <div class="skill-name">Visual Storytelling</div>
+      <div class="skill-desc">Cinematic storytelling — from concept to delivery, making audiences feel every frame</div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="skill-icon">🤝</div>
+      <div class="skill-name">Creative Collaboration</div>
+      <div class="skill-desc">Working with directors, producers, influencers, and marketing teams to bring ideas to life</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT + DOWNLOAD -->
+<section id="contact" class="contact-section">
+  <div class="sec-label">Get In Touch</div>
+  <h2 class="sec-title">LET'S CREATE<br><span class="blue">TOGETHER</span></h2>
+  <div class="contact-grid">
+    <div class="contact-cards reveal">
+      <a href="tel:+919106661476" class="contact-card">
+        <div class="contact-card-icon">📞</div>
+        <div><div class="contact-card-label">Phone</div><div class="contact-card-val">+91 91066 61476</div></div>
+      </a>
+      <a href="mailto:talrejasaahil09@gmail.com" class="contact-card">
+        <div class="contact-card-icon">✉️</div>
+        <div><div class="contact-card-label">Email</div><div class="contact-card-val">talrejasaahil09@gmail.com</div></div>
+      </a>
+      <div class="contact-card">
+        <div class="contact-card-icon">📍</div>
+        <div><div class="contact-card-label">Location</div><div class="contact-card-val">Ahmedabad, Gujarat, India</div></div>
+      </div>
+      <a href="https://youtube.com/@theweirdguyedits?si=8C1uRXBDnxkSlHic" target="_blank" rel="noopener" class="contact-card">
+        <div class="contact-card-icon">▶️</div>
+        <div><div class="contact-card-label">YouTube</div><div class="contact-card-val">@theweirdguyedits</div></div>
+      </a>
+      <div class="contact-card">
+        <div class="contact-card-icon">🎓</div>
+        <div><div class="contact-card-label">Education</div><div class="contact-card-val">BSc IT · Gandhinagar University</div></div>
+      </div>
+    </div>
+
+    <div class="download-panel reveal">
+      <div class="dl-icon">📄</div>
+      <div class="dl-title">Download My Résumé</div>
+      <p class="dl-desc">Want the full picture? Grab my résumé as a PDF — everything in one place for your next project or collaboration.</p>
+      <a href="Sahil_Talreja_Resume.pdf" download="Sahil_Talreja_Resume.pdf" class="btn-download">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+        </svg>
+        Download Resume PDF
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">SAHIL TALREJA<span>.</span></div>
+  <div class="footer-copy">© 2025 Sahil Talreja · Ahmedabad, India</div>
+</footer>
+
+<script>
+  // ── Custom cursor (desktop only)
+  const cursor = document.getElementById('cursor');
+  const ring   = document.getElementById('cursorRing');
+  if (window.matchMedia('(pointer: fine)').matches && cursor && ring) {
+    let mx=0,my=0,rx=0,ry=0;
+    document.addEventListener('mousemove', e => {
+      mx=e.clientX; my=e.clientY;
+      cursor.style.transform=`translate(${mx-4}px,${my-4}px)`;
+    });
+    (function loop(){ rx+=(mx-rx)*.12; ry+=(my-ry)*.12; ring.style.transform=`translate(${rx-16}px,${ry-16}px)`; requestAnimationFrame(loop); })();
+    document.querySelectorAll('a,button').forEach(el=>{
+      el.addEventListener('mouseenter',()=>{ring.style.width='52px';ring.style.height='52px';ring.style.opacity='.25';});
+      el.addEventListener('mouseleave',()=>{ring.style.width='32px';ring.style.height='32px';ring.style.opacity='.5';});
+    });
+  }
+
+  // ── Mobile hamburger
+  const hamburger   = document.getElementById('hamburger');
+  const mobileMenu  = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+  });
+  function closeMobile() {
+    hamburger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+  }
+
+  // ── Scroll reveal
+  const revealObs = new IntersectionObserver(entries => {
+    entries.forEach((e,i) => {
+      if (e.isIntersecting) setTimeout(()=>e.target.classList.add('visible'), i*70);
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+  // ── Counter animation
+  function animateCount(el) {
+    if (el.dataset.done) return;
+    el.dataset.done = 1;
+    const target   = +el.dataset.target;
+    const suffix   = el.dataset.suffix || '';
+    const duration = target >= 100 ? 2200 : 1800;
+    const start    = performance.now();
+    function tick(now) {
+      const p = Math.min((now - start) / duration, 1);
+      const eased = p===1 ? 1 : 1 - Math.pow(2, -10*p);
+      el.textContent = Math.floor(eased * target) + suffix;
+      if (p < 1) requestAnimationFrame(tick);
+      else el.textContent = target + suffix;
+    }
+    requestAnimationFrame(tick);
+  }
+
+  const statsObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.querySelectorAll('.count').forEach(animateCount); });
+  }, { threshold: 0.3 });
+  const ytObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.querySelectorAll('.count-yt').forEach(animateCount); });
+  }, { threshold: 0.3 });
+
+  const statsEl = document.querySelector('.stats');
+  const ytEl    = document.querySelector('.yt-right');
+  if (statsEl) statsObs.observe(statsEl);
+  if (ytEl)    ytObs.observe(ytEl);
+</script>
+</body>
+</html>
